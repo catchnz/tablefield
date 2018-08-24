@@ -125,6 +125,12 @@ class TablefieldItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    $properties['table_value'] = DataDefinition::create('string')
+      ->setLabel(t('Stringified table value'))
+      ->setDescription(t('The stringified value of the table.'))
+      ->setComputed(TRUE)
+      ->setClass('\Drupal\tablefield\TableValue');
+
     $properties['value'] = MapDataDefinition::create()
       ->setLabel(t('Table data'))
       ->setDescription(t('Stores tabular data.'));
