@@ -7,19 +7,19 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Unicode;
 
 /**
- *
+ * Implements table configuration form.
  */
 class TablefieldConfigForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'tablefield_config_form';
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
     return ['tablefield.settings'];

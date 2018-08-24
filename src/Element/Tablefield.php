@@ -100,32 +100,32 @@ class Tablefield extends FormElement {
 
     // To change number of rows.
     if (!empty($element['#addrow'])) {
-      $element['tablefield']['addrow']['row_value'] = array(
+      $element['tablefield']['addrow']['row_value'] = [
         '#title' => t('How many rows'),
         '#type' => 'hidden',
         '#default_value' => $rows,
         '#value' => $rows,
-      );
-      $element['tablefield']['addrow']['addrow']    = array(
+      ];
+      $element['tablefield']['addrow']['addrow'] = [
         '#type' => 'submit',
         '#value' => t('Add Row'),
         '#name' => 'tablefield-addrow-' . $id,
-        '#attributes' => array(
-          'class' => array('tablefield-addrow'),
-        ),
-        '#submit' => array(array(get_called_class(), 'submitCallbackRebuild')),
+        '#attributes' => [
+          'class' => ['tablefield-addrow'],
+        ],
+        '#submit' => [[get_called_class(), 'submitCallbackRebuild']],
         '#limit_validation_errors' => [
           array_merge($parents, ['tablefield', 'rebuild', 'cols']),
           array_merge($parents, ['tablefield', 'rebuild', 'rows']),
           array_merge($parents, ['tablefield', 'rebuild', 'rebuild']),
         ],
-        '#ajax' => array(
+        '#ajax' => [
           'callback' => 'Drupal\tablefield\Element\Tablefield::ajaxCallbackRebuild',
-          'progress' => array('type' => 'throbber', 'message' => NULL),
+          'progress' => ['type' => 'throbber', 'message' => NULL],
           'wrapper' => 'tablefield-' . $id . '-wrapper',
           'effect' => 'fade',
-        ),
-      );
+        ],
+      ];
     }
 
     // If no rebuild, we pass along the rows/cols as a value. Otherwise, we will
@@ -223,12 +223,17 @@ class Tablefield extends FormElement {
 
   /**
    * AJAX callback to rebuild the number of rows/columns.
+   *
    * The basic idea is to descend down the list of #parent elements of the
    * triggering_element in order to locate the tablefield inside of the $form
-   * array. That is the element that we need to return.
+   * array.
+   *
+   * That is the element that we need to return.
    *
    * @param array $form
-   * @param FormStateInterface $form_state
+   *   Form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
    */
   public static function ajaxCallbackRebuild(array $form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
@@ -246,7 +251,12 @@ class Tablefield extends FormElement {
   }
 
   /**
+   * Submit handler.
    *
+   * @param array $form
+   *   Form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
    */
   public static function submitCallbackRebuild(array $form, FormStateInterface $form_state) {
     // Check what triggered this. We might need to rebuild or to import.
@@ -288,8 +298,10 @@ class Tablefield extends FormElement {
    * Helper function to import data from a CSV file.
    *
    * @param string $form_field_name
+   *   Field name.
    *
-   * @return array $tablefield
+   * @return mixed
+   *   Table array or FALSE.
    */
   private static function importCsv($form_field_name) {
     $file_upload = \Drupal::request()->files->get("files[$form_field_name]", NULL, TRUE);

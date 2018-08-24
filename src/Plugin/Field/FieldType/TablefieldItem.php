@@ -136,7 +136,7 @@ class TablefieldItem extends FieldItemBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setValue($values, $notify = TRUE) {
     if (!isset($values)) {
@@ -175,7 +175,7 @@ class TablefieldItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
-    // @TODO should field definition be counted?
+    // @todo Should field definition be counted?
     return [
       'value' => [['Header 1', 'Header 2'], ['Data 1', 'Data 2']],
       'rebuild' => ['rows' => 2, 'cols' => 2],

@@ -15,7 +15,7 @@ class Tablefield {
    * @param array $tablefield
    *   The table as it appears in FAPI.
    */
-  static public function rationalizeTable(array $tablefield) {
+  public static function rationalizeTable(array $tablefield) {
     $tabledata = [];
 
     // Rationalize the table data.

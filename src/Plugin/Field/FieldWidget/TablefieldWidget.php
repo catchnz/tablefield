@@ -124,7 +124,7 @@ class TablefieldWidget extends WidgetBase {
   }
 
   /**
-   *
+   * Validation handler.
    */
   public function validateTablefield(array &$element, FormStateInterface &$form_state, array $form) {
     if ($element['#required'] && $form_state->getTriggeringElement()['#type'] == 'submit') {
@@ -138,7 +138,8 @@ class TablefieldWidget extends WidgetBase {
 
   /**
    * {@inheritdoc}
-   * set error only on the first item in a multi-valued field.
+   *
+   * Set error only on the first item in a multi-valued field.
    */
   public function errorElement(array $element, ConstraintViolationInterface $violation, array $form, FormStateInterface $form_state) {
     return $element[0];

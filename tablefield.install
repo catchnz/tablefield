@@ -6,18 +6,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function tablefield_install() {
-}
-
-/**
- * Implements hook_uninstall().
- */
-function tablefield_uninstall() {
-}
-
-/**
  * Implements hook_update_dependencies().
  */
 function tablefield_update_dependencies() {
@@ -31,7 +19,9 @@ function tablefield_update_dependencies() {
 }
 
 /**
+ * Repair function.
  *
+ * @todo Maintainer should describe the logic.
  */
 function tablefield_repair_schema() {
   $spec = [
@@ -52,7 +42,7 @@ function tablefield_repair_schema() {
       $table = "field_data_{$field['field_name']}";
       $revision_table = "field_revision_{$field['field_name']}";
     }
-    $column = $field['field_name'] . '_' . 'format';
+    $column = $field['field_name'] . '_format';
     db_change_field($table, $column, $column, $spec);
     db_change_field($revision_table, $column, $column, $spec);
   }
