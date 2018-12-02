@@ -304,7 +304,14 @@ class Tablefield extends FormElement {
    *   Table array or FALSE.
    */
   private static function importCsv($form_field_name) {
-    $file_upload = \Drupal::request()->files->get("files[$form_field_name]", NULL, TRUE);
+    $files = \Drupal::request()->files->get('files');
+    $file_upload = $files[$form_field_name];
+
+    if ($file_upload->getClientOriginalExtension() != 'csv') {
+      drupal_set_message(t('Only files with the following extensions are allowed: %files-allowed.', ['%files-allowed' => 'csv']), 'error');
+      return FALSE;
+    }
+
     if (!empty($file_upload) && $handle = fopen($file_upload->getPathname(), 'r')) {
       // Populate CSV values.
       $tablefield = [];
@@ -312,7 +319,7 @@ class Tablefield extends FormElement {
       $rows = 0;
 
       $separator = \Drupal::config('tablefield.settings')->get('csv_separator');
-      while (($csv = fgetcsv($handle, 0, $separator)) !== FALSE) {
+      while (($csv = fgetcsv($handle, 0, $separator)) != FALSE) {
         foreach ($csv as $value) {
           $tablefield['table'][$rows][] = $value;
         }
@@ -331,8 +338,9 @@ class Tablefield extends FormElement {
       return $tablefield;
     }
 
-    drupal_set_message(t('There was a problem importing @file.', ['@file' => $file_upload->getClientOriginalName()]));
+    drupal_set_message(t('There was a problem importing @file.', ['@file' => $file_upload->getClientOriginalName()]), 'error');
     return FALSE;
   }
+
 
 }
