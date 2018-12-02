@@ -63,7 +63,7 @@ class TablefieldFormatter extends FormatterBase {
           }
         }
 
-        $header = $noheader ? NULL : $header_data;
+        $header = $noheader ? [] : $header_data;
 
         $render_array = [];
 
