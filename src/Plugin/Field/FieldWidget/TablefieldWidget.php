@@ -90,6 +90,14 @@ class TablefieldWidget extends WidgetBase {
     $cols = isset($default_value->rebuild['cols']) ?
       $default_value->rebuild['cols'] : \Drupal::config('tablefield.settings')->get('cols');
 
+    $element['caption'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Table Caption'),
+      '#default_value' => (!empty($default_value->caption) ? $default_value->caption : NULL),
+      '#size' => 60,
+      '#description' => $this->t('This brief caption will be associated with the table and will help screen reader better describe the content within.'),
+    ];
+
     $element = [
       '#type' => 'tablefield',
       '#input_type' => $this->getSetting('input_type'),

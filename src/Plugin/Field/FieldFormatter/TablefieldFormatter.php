@@ -40,6 +40,8 @@ class TablefieldFormatter extends FormatterBase {
       if (!empty($table->value)) {
         // Tablefield::rationalizeTable($table->value);.
         $tabledata = $table->value;
+        $caption = $tabledata['caption'];
+        unset($tabledata['caption']);
 
         // Run the table through input filters.
         foreach ($tabledata as $row_key => $row) {
@@ -83,7 +85,7 @@ class TablefieldFormatter extends FormatterBase {
           $render_array['export'] = [
             '#type' => 'container',
             '#attributes' => [
-              'id' => 'tablefield-export-link-' . $entity_type . '-' . $entity_id . '-' . $field_name . '-' . $delta,
+              'id' => 'tablefield-export-link-' . $delta,
               'class' => 'tablefield-export-link',
             ],
           ];
@@ -104,6 +106,7 @@ class TablefieldFormatter extends FormatterBase {
               'tablefield',
             ],
           ],
+          '#caption' => $caption,
           '#prefix' => '<div id="tablefield-wrapper-' . $entity_type . '-' . $entity_id . '-' . $field_name . '-' . $delta . '" class="tablefield-wrapper">',
           '#suffix' => '</div>',
         ];

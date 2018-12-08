@@ -39,6 +39,11 @@ class TablefieldItem extends FieldItemBase {
           'length' => 255,
           'default value' => '',
         ],
+        'caption' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'default value' => '',
+        ],
       ],
     ];
   }
@@ -138,6 +143,9 @@ class TablefieldItem extends FieldItemBase {
     $properties['format'] = DataDefinition::create('filter_format')
       ->setLabel(t('Text format'));
 
+    $properties['caption'] = DataDefinition::create('string')
+      ->setLabel(t('Table Caption'));
+
     return $properties;
   }
 
@@ -164,9 +172,12 @@ class TablefieldItem extends FieldItemBase {
     }
     // In case this is being loaded from storage recalculate rows/cols.
     elseif (empty($values['rebuild'])) {
+      unset($values['value']['caption']);
       $values['rebuild']['rows'] = isset($values['value']) ? count($values['value']) : 0;
       $values['rebuild']['cols'] = isset($values['value'][0]) ? count($values['value'][0]) : 0;
     }
+
+    $values['value']['caption'] = $values['caption'];
 
     // If lock defaults is enabled the table might need sorting.
     $lock = $this->getFieldDefinition()->getSetting('lock_values');
