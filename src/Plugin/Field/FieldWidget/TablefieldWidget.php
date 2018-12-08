@@ -94,7 +94,7 @@ class TablefieldWidget extends WidgetBase {
       '#type' => 'tablefield',
       '#input_type' => $this->getSetting('input_type'),
       '#description_display' => 'before',
-      '#description' => $this->t('The first row will appear as the table header. Leave the first row blank if you do not need a header.'),
+      '#description' => $element['#description'] ?: $this->t('The first row will appear as the table header. Leave the first row blank if you do not need a header.'),
       '#cols' => $cols,
       '#rows' => $rows,
       '#default_value' => $default_value->value,
