@@ -130,7 +130,18 @@ class TablefieldWidget extends WidgetBase {
     if ($element['#required'] && $form_state->getTriggeringElement()['#type'] == 'submit') {
       $items = new FieldItemList($this->fieldDefinition);
       $this->extractFormValues($items, $form, $form_state);
-      if (!$items->count()) {
+      $values = FALSE;
+      if (isset($element['#value'])) {
+        foreach ($element['#value']['tablefield']['table'] as $row) {
+          foreach ($row as $cell) {
+            if (empty($cell)) {
+              $values = TRUE;
+              break;
+            }
+          }
+        };
+      }
+      if (!$items->count() && $values == true) {
         $form_state->setError($element, t('@name field is required.', ['@name' => $this->fieldDefinition->getLabel()]));
       }
     }
