@@ -342,5 +342,4 @@ class Tablefield extends FormElement {
     return FALSE;
   }
 
-
 }

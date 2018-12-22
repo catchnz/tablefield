@@ -149,7 +149,7 @@ class TablefieldWidget extends WidgetBase {
           }
         };
       }
-      if (!$items->count() && $values == true) {
+      if (!$items->count() && $values == TRUE) {
         $form_state->setError($element, t('@name field is required.', ['@name' => $this->fieldDefinition->getLabel()]));
       }
     }

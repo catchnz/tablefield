@@ -4,6 +4,7 @@ namespace Drupal\tablefield\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 // Use Drupal\tablefield\Utility\Tablefield;.
@@ -23,6 +24,55 @@ class TablefieldFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
+  public static function defaultSettings() {
+    return [
+      'row_header' => 1,
+      'column_header' => 0,
+    ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $elements['row_header'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display first row as a table header'),
+      '#default_value' => $this->getSetting('row_header'),
+    ];
+
+    $elements['column_header'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display first column as a table header'),
+      '#default_value' => $this->getSetting('column_header'),
+    ];
+
+    return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    $summary = [];
+
+    $row_header = $this->getSetting('row_header');
+    $column_header = $this->getSetting('column_header');
+
+    if ($row_header) {
+      $summary[] = $this->t('First row as a table header');
+    }
+
+    if ($column_header) {
+      $summary[] = $this->t('First column as a table header');
+    }
+
+    return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function viewElements(FieldItemListInterface $items, $langcode = NULL) {
 
     $field = $items->getFieldDefinition();
@@ -33,7 +83,11 @@ class TablefieldFormatter extends FormatterBase {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
 
+    $row_header = $this->getSetting('row_header');
+    $column_header = $this->getSetting('column_header');
+
     $elements = [];
+    $header = [];
 
     foreach ($items as $delta => $table) {
 
@@ -53,19 +107,31 @@ class TablefieldFormatter extends FormatterBase {
           }
         }
 
-        // Pull the header for theming.
-        $header_data = array_shift($tabledata);
+        if ($row_header) {
 
-        // Check for an empty header, if so we don't want to theme it.
-        $noheader = TRUE;
-        foreach ($header_data as $cell) {
-          if (strlen($cell['data']) > 0) {
-            $noheader = FALSE;
-            break;
+          // Pull the header for theming.
+          $header_data = array_shift($tabledata);
+
+          // Check for an empty header, if so we don't want to theme it.
+          $has_header = FALSE;
+          foreach ($header_data as $cell) {
+            if (strlen($cell['data']) > 0) {
+              $has_header = TRUE;
+              break;
+            }
+          }
+          if ($has_header) {
+            $header = $header_data;
           }
         }
 
-        $header = $noheader ? [] : $header_data;
+        if ($column_header) {
+          foreach ($tabledata as $row_key => $row) {
+            if (strlen($tabledata[$row_key][0]['data']) > 0) {
+              $tabledata[$row_key][0]['header'] = TRUE;
+            }
+          }
+        }
 
         $render_array = [];
 
