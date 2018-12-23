@@ -213,6 +213,11 @@ class TablefieldItem extends FieldItemBase {
     // Check table data first.
     if (!empty($value) && isset($value['value']) && is_array($value['value'])) {
 
+      // Check table caption first.
+      if (!empty($value['caption'])) {
+        return FALSE;
+      }
+
       // Ignore table header?
       if (!$in_settings && $empty_rules['ignore_table_header']) {
         array_shift($value['value']);
