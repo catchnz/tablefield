@@ -177,7 +177,9 @@ class TablefieldItem extends FieldItemBase {
       $values['rebuild']['cols'] = isset($values['value'][0]) ? count($values['value'][0]) : 0;
     }
 
-    $values['value']['caption'] = $values['caption'];
+    if (isset($values['caption'])) {
+      $values['value']['caption'] = $values['caption'];
+    }
 
     // If lock defaults is enabled the table might need sorting.
     $lock = $this->getFieldDefinition()->getSetting('lock_values');
@@ -217,9 +219,11 @@ class TablefieldItem extends FieldItemBase {
       }
 
       foreach ($value['value'] as $row) {
-        foreach ($row as $cell) {
-          if (!empty($cell)) {
-            return FALSE;
+        if (is_array($row)) {
+          foreach ($row as $cell) {
+            if (!empty($cell)) {
+              return FALSE;
+            }
           }
         }
       }
