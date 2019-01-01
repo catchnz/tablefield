@@ -93,7 +93,7 @@ class TablefieldItem extends FieldItemBase {
     ];
     $form['lock_values'] = [
       '#type' => 'checkbox',
-      '#title' => 'Lock table field defaults from further edits during node add/edit.',
+      '#title' => 'Lock cell default values from further edits during node add/edit. Most commonly used to have fixed values for the header.',
       '#default_value' => $settings['lock_values'],
     ];
     $form['cell_processing'] = [
@@ -181,9 +181,17 @@ class TablefieldItem extends FieldItemBase {
       $values['value']['caption'] = $values['caption'];
     }
 
-    // If lock defaults is enabled the table might need sorting.
+    // If "Lock defaults" is enabled the table needs sorting.
     $lock = $this->getFieldDefinition()->getSetting('lock_values');
     if ($lock) {
+      // Sort columns on key.
+      foreach ($values['value'] as $key => $value) {
+        if (is_array($value)) {
+          ksort($value);
+          $values['value'][$key] = $value;
+        }
+      }
+      // Sort rows on key.
       ksort($values['value']);
     }
 
