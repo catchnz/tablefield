@@ -192,7 +192,9 @@ class TablefieldItem extends FieldItemBase {
         }
       }
       // Sort rows on key.
-      ksort($values['value']);
+      if (is_array($values['value'])) {
+        ksort($values['value']);
+      }
     }
 
     parent::setValue($values, $notify);
