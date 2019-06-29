@@ -2,6 +2,7 @@
 
 namespace Drupal\tablefield\Element;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\NestedArray;
@@ -313,6 +314,16 @@ class Tablefield extends FormElement {
     }
 
     if (!empty($file_upload) && $handle = fopen($file_upload->getPathname(), 'r')) {
+      // Checking the encoding of the CSV file to be UTF-8.
+      $encoding = 'UTF-8';
+      if (function_exists('mb_detect_encoding')) {
+        $file_contents = file_get_contents($file_upload->getPathname());
+        $encodings = ['UTF-8', 'ISO-8859-1', 'WINDOWS-1251'];
+        \Drupal::moduleHandler()->alter('tablefield_encodings', $encodings);
+        $encodings_list = implode(',', $encodings);
+        $encoding = mb_detect_encoding($file_contents, $encodings_list);
+      }
+
       // Populate CSV values.
       $tablefield = [];
       $max_cols = 0;
@@ -321,7 +332,7 @@ class Tablefield extends FormElement {
       $separator = \Drupal::config('tablefield.settings')->get('csv_separator');
       while (($csv = fgetcsv($handle, 0, $separator)) != FALSE) {
         foreach ($csv as $value) {
-          $tablefield['table'][$rows][] = $value;
+          $tablefield['table'][$rows][] = self::convertEncoding($value, $encoding);
         }
         $cols = count($csv);
         if ($cols > $max_cols) {
@@ -340,6 +351,32 @@ class Tablefield extends FormElement {
 
     drupal_set_message(t('There was a problem importing @file.', ['@file' => $file_upload->getClientOriginalName()]), 'error');
     return FALSE;
+  }
+
+  /**
+   * Helper function to detect and convert strings not in UTF-8 to UTF-8.
+   *
+   * @param string $data
+   *   The string which needs converting.
+   * @param string $encoding
+   *   The encoding of the CSV file.
+   *
+   * @return string
+   *   UTF encoded string.
+   */
+  protected static function convertEncoding($data, $encoding) {
+    // Converting UTF-8 to UTF-8 will not work.
+    if ($encoding == 'UTF-8') {
+      return $data;
+    }
+
+    // Try convert the data to UTF-8.
+    if ($encoded_data = Unicode::convertToUtf8($data, $encoding)) {
+      return $encoded_data;
+    }
+
+    // Fallback on the input data.
+    return $data;
   }
 
 }
