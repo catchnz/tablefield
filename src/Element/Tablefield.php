@@ -274,7 +274,7 @@ class Tablefield extends FormElement {
       }
       NestedArray::setValue($form_state->getStorage(), $parents, $value['rebuild']);
 
-      drupal_set_message(t('Table structure rebuilt.'), 'status', FALSE);
+      \Drupal::messenger()->addStatus(t('Table structure rebuilt.'), FALSE);
     }
     elseif (isset($triggering_element['#name']) && $triggering_element['#name'] == 'tablefield-import-' . $id) {
       // Import CSV.
@@ -309,7 +309,7 @@ class Tablefield extends FormElement {
     $file_upload = $files[$form_field_name];
 
     if ($file_upload->getClientOriginalExtension() != 'csv') {
-      drupal_set_message(t('Only files with the following extensions are allowed: %files-allowed.', ['%files-allowed' => 'csv']), 'error');
+      \Drupal::messenger()->addError(t('Only files with the following extensions are allowed: %files-allowed.', ['%files-allowed' => 'csv']));
       return FALSE;
     }
 
@@ -345,11 +345,11 @@ class Tablefield extends FormElement {
       $tablefield['rebuild']['cols'] = $max_cols;
       $tablefield['rebuild']['rows'] = $rows;
 
-      drupal_set_message(t('Successfully imported @file', ['@file' => $file_upload->getClientOriginalName()]));
+      \Drupal::messenger()->addMessage(t('Successfully imported @file', ['@file' => $file_upload->getClientOriginalName()]));
       return $tablefield;
     }
 
-    drupal_set_message(t('There was a problem importing @file.', ['@file' => $file_upload->getClientOriginalName()]), 'error');
+    \Drupal::messenger()->addError(t('There was a problem importing @file.', ['@file' => $file_upload->getClientOriginalName()]));
     return FALSE;
   }
 
