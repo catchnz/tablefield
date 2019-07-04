@@ -18,7 +18,12 @@ class TableValue extends TypedData {
     $value = '';
     if (isset($item->value)) {
       foreach ($item->value as $row) {
-        $value .= implode(' ', $row) . ' ';
+        if (is_array($row)) {
+          $value .= implode(' ', $row) . ' ';
+        }
+        elseif (is_string($row)) {
+          $value .= ' ' . $row . ' ';
+        }
       }
       $value = trim($value);
     }
