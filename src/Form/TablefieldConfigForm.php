@@ -4,7 +4,6 @@ namespace Drupal\tablefield\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\Unicode;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -43,9 +42,11 @@ class TablefieldConfigForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('CSV separator'),
       '#size' => 1,
+      '#length' => 1,
       '#maxlength' => 1,
+      '#required' => TRUE,
       '#default_value' => $this->config('tablefield.settings')->get('csv_separator'),
-      '#description' => $this->t('Select the separator for the CSV import/export.'),
+      '#description' => $this->t('Select the separator for the CSV import/export. Most common are a comma (,) or a semicolon (;).'),
     ];
 
     $form['rows'] = [
@@ -67,16 +68,6 @@ class TablefieldConfigForm extends ConfigFormBase {
     ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    if (Unicode::mb_strlen($form_state->getValue('csv_separator')) !== 1) {
-      $message = $this->t('Separator must be one character only!');
-      $this->setFormError('csv_separator', $message);
-    }
   }
 
   /**
