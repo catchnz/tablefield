@@ -217,7 +217,19 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
           '#caption' => $caption,
           '#prefix' => '<div id="tablefield-wrapper-' . $entity_type . '-' . $entity_id . '-' . $field_name . '-' . $delta . '" class="tablefield-wrapper">',
           '#suffix' => '</div>',
+          '#responsive' => FALSE,
+
         ];
+
+        // Extend render array if responsive_tables_filter module is enabled.
+        if (\Drupal::moduleHandler()
+          ->moduleExists('responsive_tables_filter')) {
+          array_push($render_array['tablefield']['#attributes']['class'], 'tablesaw', 'tablesaw-stack');
+          $render_array['tablefield']['#attributes']['data-tablesaw-mode'] = 'stack';
+          $render_array['tablefield']['#attached'] = [
+            'library' => ['responsive_tables_filter/tablesaw-filter'],
+          ];
+        }
 
         $elements[$delta] = $render_array;
       }
