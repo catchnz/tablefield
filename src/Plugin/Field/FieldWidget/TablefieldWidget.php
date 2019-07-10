@@ -111,7 +111,7 @@ class TablefieldWidget extends WidgetBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $is_field_settings_default_widget_form = $form_state->getBuildInfo()['form_id'] == 'field_ui_field_edit_form' ? 1 : 0;
+    $is_field_settings_default_widget_form = $form_state->getBuildInfo()['form_id'] == 'field_config_edit_form' ? 1 : 0;
 
     $field = $items[0]->getFieldDefinition();
     $field_settings = $field->getSettings();
