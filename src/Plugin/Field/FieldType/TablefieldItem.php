@@ -172,7 +172,9 @@ class TablefieldItem extends FieldItemBase {
     }
     // In case this is being loaded from storage recalculate rows/cols.
     elseif (empty($values['rebuild'])) {
-      unset($values['value']['caption']);
+      if (array_key_exists('value', $values) && array_key_exists('caption', $values['value'])) {
+        unset($values['value']['caption']);
+      }
       $values['rebuild']['rows'] = isset($values['value']) ? count($values['value']) : 0;
       $values['rebuild']['cols'] = isset($values['value'][0]) ? count($values['value'][0]) : 0;
     }
