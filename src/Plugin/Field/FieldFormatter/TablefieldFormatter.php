@@ -2,6 +2,7 @@
 
 namespace Drupal\tablefield\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
@@ -32,6 +33,8 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
    */
   protected $currentUser;
 
+  protected $ModuleHandler;
+
   /**
    * {@inheritdoc}
    */
@@ -42,9 +45,11 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
                               $label,
                               $view_mode,
                               array $third_party_settings,
-                              AccountProxy $currentUser) {
+                              AccountProxy $currentUser,
+                              ModuleHandlerInterface $moduleHandler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->currentUser = $currentUser;
+    $this->ModuleHandler = $moduleHandler;
   }
 
   /**
@@ -59,7 +64,8 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('module_handler')
     );
   }
 
@@ -222,8 +228,7 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
         ];
 
         // Extend render array if responsive_tables_filter module is enabled.
-        if (\Drupal::moduleHandler()
-          ->moduleExists('responsive_tables_filter')) {
+        if ($this->ModuleHandler->moduleExists('responsive_tables_filter')) {
           array_push($render_array['tablefield']['#attributes']['class'], 'tablesaw', 'tablesaw-stack');
           $render_array['tablefield']['#attributes']['data-tablesaw-mode'] = 'stack';
           $render_array['tablefield']['#attached'] = [
