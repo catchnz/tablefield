@@ -1,5 +1,5 @@
 name: 'TableField'
-description: 'Defines a generic tablular data field.'
+description: 'Defines a generic tabular data field.'
 package: Field types
 
 type: module
