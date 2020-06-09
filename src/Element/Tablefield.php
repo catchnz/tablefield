@@ -315,6 +315,11 @@ class Tablefield extends FormElement {
     $files = \Drupal::request()->files->get('files');
     $file_upload = $files[$form_field_name];
 
+    if (empty($file_upload)) {
+      \Drupal::messenger()->addError(t('Select a CSV file to upload.'));
+      return FALSE;
+    }
+
     if ($file_upload->getClientOriginalExtension() != 'csv') {
       \Drupal::messenger()->addError(t('Only files with the following extensions are allowed: %files-allowed.', ['%files-allowed' => 'csv']));
       return FALSE;
