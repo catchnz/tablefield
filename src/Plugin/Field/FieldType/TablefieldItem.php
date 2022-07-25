@@ -177,6 +177,10 @@ class TablefieldItem extends FieldItemBase {
       }
       $values['rebuild']['rows'] = isset($values['value']) ? count($values['value']) : 0;
       $values['rebuild']['cols'] = isset($values['value'][0]) ? count($values['value'][0]) : 0;
+      // If the weight column was saved, don't include it in the count.
+      if (isset($values['value'][0]['weight'])) {
+        --$values['rebuild']['cols'];
+      }
     }
 
     if (isset($values['caption'])) {
