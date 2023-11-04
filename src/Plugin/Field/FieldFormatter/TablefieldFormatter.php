@@ -81,6 +81,8 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
     return [
       'row_header' => 1,
       'column_header' => 0,
+      'skip_empty_rows' => 0,
+      'skip_empty_columns' => 0,
     ] + parent::defaultSettings();
   }
 
@@ -98,6 +100,20 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
       '#type' => 'checkbox',
       '#title' => $this->t('Display first column as a table header'),
       '#default_value' => $this->getSetting('column_header'),
+    ];
+
+    $elements['skip_empty_rows'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Don\'t display empty rows'),
+      '#description' => $this->t('Skip the row if all cells in row are empty.'),
+      '#default_value' => $this->getSetting('skip_empty_rows'),
+    ];
+
+    $elements['skip_empty_columns'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Don\'t display empty columns'),
+      '#description' => $this->t('Skip the columns if all cells in column are empty.'),
+      '#default_value' => $this->getSetting('skip_empty_columns'),
     ];
 
     return $elements;
