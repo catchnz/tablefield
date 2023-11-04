@@ -107,14 +107,14 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     $elements['hide_empty_rows'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Don\'t display empty row'),
+      '#title' => $this->t('Don\'t display empty rows'),
       '#description' => $this->t('Hide the row if all cells in row are empty.'),
       '#default_value' => $this->getSetting('hide_empty_rows'),
     ];
 
     $elements['hide_empty_columns'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Don\'t display empty column'),
+      '#title' => $this->t('Don\'t display empty columns'),
       '#description' => $this->t('Hide the column if all cells in column are empty.'),
       '#default_value' => $this->getSetting('hide_empty_columns'),
     ];

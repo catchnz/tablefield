@@ -62,3 +62,9 @@ field.formatter.settings.tablefield:
     column_header:
       type: boolean
       label: 'Display first column as a table header'
+    hide_empty_rows:
+      type: boolean
+      label: 'Don''t display empty rows'
+    hide_empty_columns:
+      type: boolean
+      label: 'Don''t display empty columns'
