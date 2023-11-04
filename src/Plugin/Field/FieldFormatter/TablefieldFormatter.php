@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
+use Drupal\tablefield\TableFieldProcessTableTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 // Use Drupal\tablefield\Utility\Tablefield;.
@@ -25,6 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class TablefieldFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+
+  use TableFieldProcessTableTrait;
 
   /**
    * Drupal\Core\Session\AccountProxy definition.
@@ -81,8 +84,8 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
     return [
       'row_header' => 1,
       'column_header' => 0,
-      'skip_empty_rows' => 0,
-      'skip_empty_columns' => 0,
+      'hide_empty_rows' => 0,
+      'hide_empty_columns' => 0,
     ] + parent::defaultSettings();
   }
 
@@ -102,18 +105,18 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
       '#default_value' => $this->getSetting('column_header'),
     ];
 
-    $elements['skip_empty_rows'] = [
+    $elements['hide_empty_rows'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Don\'t display empty rows'),
-      '#description' => $this->t('Skip the row if all cells in row are empty.'),
-      '#default_value' => $this->getSetting('skip_empty_rows'),
+      '#title' => $this->t('Don\'t display empty row'),
+      '#description' => $this->t('Hide the row if all cells in row are empty.'),
+      '#default_value' => $this->getSetting('hide_empty_rows'),
     ];
 
-    $elements['skip_empty_columns'] = [
+    $elements['hide_empty_columns'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Don\'t display empty columns'),
-      '#description' => $this->t('Skip the columns if all cells in column are empty.'),
-      '#default_value' => $this->getSetting('skip_empty_columns'),
+      '#title' => $this->t('Don\'t display empty column'),
+      '#description' => $this->t('Hide the column if all cells in column are empty.'),
+      '#default_value' => $this->getSetting('hide_empty_columns'),
     ];
 
     return $elements;
@@ -154,26 +157,33 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     $row_header = $this->getSetting('row_header');
     $column_header = $this->getSetting('column_header');
-    $skip_empty_rows = $this->getSetting('skip_empty_rows');
+    $hide_empty_rows = $this->getSetting('hide_empty_rows');
+    $hide_empty_columns = $this->getSetting('hide_empty_columns');
 
     $elements = [];
     $header = [];
 
     foreach ($items as $delta => $table) {
-
       if (!empty($table->value)) {
         // Tablefield::rationalizeTable($table->value);.
         $tabledata = $table->value;
         $caption = $tabledata['caption'];
         unset($tabledata['caption']);
 
+        if ($hide_empty_rows) {
+          $tabledata = $this->removeEmptyRows($tabledata);
+        }
+
+        if ($hide_empty_columns) {
+          $tabledata = $this->removeEmptyColumns($tabledata);
+        }
+
+        if (empty($tabledata)) {
+          return $elements;
+        }
+
         // Run the table through input filters.`
         foreach ($tabledata as $row_key => $row) {
-          if ($skip_empty_rows && $this->checkIfGivenRowIsEmpty($row)) {
-            unset($tabledata[$row_key]);
-            continue;
-          }
-
           foreach ($row as $col_key => $cell) {
             if (is_numeric($col_key)) {
               $tabledata[$row_key][$col_key] = [
@@ -275,21 +285,4 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
     }
     return $elements;
   }
-
-  /**
-   * Check if given table`s row is empty.
-   *
-   * @param array $row
-   *   The given table's row.
-   *
-   * @return bool
-   *   TRUE - if given tables`s row is empty.
-   */
-  protected function checkIfGivenRowIsEmpty(array $row) : bool {
-    // Removed the row`s 'weight' property because of it is metadata element
-    // should not to be considered as row`s data element.
-    unset($row['weight']);
-    return !(count($row) === 0 || array_filter($row));
-  }
-
 }
