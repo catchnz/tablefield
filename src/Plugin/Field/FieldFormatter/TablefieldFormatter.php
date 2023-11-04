@@ -154,6 +154,7 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     $row_header = $this->getSetting('row_header');
     $column_header = $this->getSetting('column_header');
+    $skip_empty_rows = $this->getSetting('skip_empty_rows');
 
     $elements = [];
     $header = [];
@@ -166,8 +167,13 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
         $caption = $tabledata['caption'];
         unset($tabledata['caption']);
 
-        // Run the table through input filters.
+        // Run the table through input filters.`
         foreach ($tabledata as $row_key => $row) {
+          if ($skip_empty_rows && $this->checkIfGivenRowIsEmpty($row)) {
+            unset($tabledata[$row_key]);
+            continue;
+          }
+
           foreach ($row as $col_key => $cell) {
             if (is_numeric($col_key)) {
               $tabledata[$row_key][$col_key] = [
@@ -185,7 +191,7 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
         if ($row_header) {
 
           // Pull the header for theming.
-          $header_data = array_shift($tabledata);
+          $header_data = array_shift($tabledata) ?? [];
 
           // Check for an empty header, if so we don't want to theme it.
           $has_header = FALSE;
@@ -268,6 +274,22 @@ class TablefieldFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     }
     return $elements;
+  }
+
+  /**
+   * Check if given table`s row is empty.
+   *
+   * @param array $row
+   *   The given table's row.
+   *
+   * @return bool
+   *   TRUE - if given tables`s row is empty.
+   */
+  protected function checkIfGivenRowIsEmpty(array $row) : bool {
+    // Removed the row`s 'weight' property because of it is metadata element
+    // should not to be considered as row`s data element.
+    unset($row['weight']);
+    return !(count($row) === 0 || array_filter($row));
   }
 
 }
