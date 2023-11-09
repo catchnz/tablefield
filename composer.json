@@ -1,0 +1,10 @@
+{
+    "name": "drupal/tablefield",
+    "description": "This module provides a simple, generic form/widget to input tabular data. The form allows the user to select the number or rows/columns in the table, then enter data via textfields. Since this is a CCK field, it is automatically revision capable, multi-value capable and has prebuilt integration with Views.",
+    "type": "drupal-module",
+    "require": {
+        "drupal/core": "^10"
+    },
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev"
+}
